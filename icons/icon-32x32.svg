@@ -1,0 +1,12 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="4" fill="#000000"/>
+  <rect x="4" y="4" width="24" height="24" rx="2" fill="#1a1a2e"/>
+  
+  <!-- Simplified RPG logo -->
+  <text x="16" y="14" font-family="Arial Black, sans-serif" font-size="6" font-weight="bold" text-anchor="middle" fill="#4a90e2">RPG</text>
+  <text x="16" y="20" font-family="Arial Black, sans-serif" font-size="5" font-weight="bold" text-anchor="middle" fill="#63b3ed">ADV</text>
+  
+  <!-- Mini sword -->
+  <rect x="13" y="22" width="2" height="4" fill="#e74c3c"/>
+  <rect x="12" y="24" width="4" height="2" fill="#c0392b"/>
+</svg>

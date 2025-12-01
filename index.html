@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    
+    <!-- Mobile viewport optimizations -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA meta tags -->
+    <meta name="theme-color" content="#000000">
+    <meta name="application-name" content="RPG Adventure">
+    <meta name="apple-mobile-web-app-title" content="RPG Adventure">
+    <meta name="description" content="A mobile-friendly RPG adventure game with exploration, combat, and quests">
+    <meta name="keywords" content="RPG, adventure, mobile game, canvas game">
+    
+    <!-- PWA manifest and icons -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="icon" type="image/png" href="icons/icon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="icons/icon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="icons/icon-512x512.png" sizes="512x512">
+    
+    <title>RPG Adventure</title>
+    
+    <style>
+        /* Base reset and mobile optimizations */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        html, body {
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            overscroll-behavior: none;
+        }
+        
+        /* Prevent scrolling and zooming on mobile */
+        body {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        /* Loading screen */
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .loading-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        .loading-subtitle {
+            font-size: 1.2em;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+        
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4a90e2, #63b3ed);
+            width: 0%;
+            animation: loading 2s ease-in-out infinite;
+            border-radius: 2px;
+        }
+        
+        .loading-text {
+            font-size: 0.9em;
+            color: #888;
+            animation: fade 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes loading {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        @keyframes fade {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        /* Game container */
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1920px;
+            max-height: 1080px;
+        }
+        
+        /* Top bar with responsive design */
+        .topbar {
+            background: rgb(16 18 24 / 0.9);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 40px;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .topbar span {
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        #sceneIndicator {
+            color: #4a90e2;
+            font-weight: bold;
+        }
+        
+        /* Mobile-optimized canvas */
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+            touch-action: none;
+        }
+        
+        /* Touch-friendly hint bar */
+        .hint {
+            background: rgb(16 18 24 / 0.9);
+            padding: 8px 12px;
+            text-align: center;
+            color: #999;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 6px 10px;
+                min-height: 36px;
+            }
+            
+            .topbar span {
+                font-size: 12px;
+            }
+            
+            .hint {
+                font-size: 10px;
+                padding: 6px 10px;
+                min-height: 28px;
+                line-height: 1.3;
+            }
+            
+            .loading-title {
+                font-size: 2em;
+            }
+            
+            .loading-subtitle {
+                font-size: 1em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .topbar span {
+                font-size: 11px;
+            }
+            
+            .hint {
+                font-size: 9px;
+                padding: 5px 8px;
+            }
+            
+            .loading-title {
+                font-size: 1.8em;
+            }
+        }
+        
+        /* Prevent text selection and context menu */
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Hide loading screen when game is ready */
+        .loading-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Touch control zones (visual debugging - remove in production) */
+        .touch-debug {
+            position: absolute;
+            border: 2px dashed rgba(255, 255, 0, 0.5);
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        /* Mobile landscape optimizations */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .hint {
+                display: none; /* Hide hint on landscape mobile for more game space */
+            }
+        }
+    </style>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-title">RPG Adventure</div>
+            <div class="loading-subtitle">Loading your adventure...</div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <div class="loading-text">Preparing world</div>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div class="container">
+        <div class="topbar">
+            <span>RPG Adventure</span>
+            <span id="sceneIndicator">Loading...</span>
+        </div>
+        <canvas id="gameCanvas" width="1920" height="1080"></canvas>
+        <div class="hint">Desktop: Arrow Keys to move, Enter to interact, B for battle | Mobile: On-screen D-pad & buttons | Battle: Arrow Keys/Touch to navigate, Enter/A to select</div>
+    </div>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Enhanced service worker registration with update handling
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                        
+                        // Check for updates periodically
+                        setInterval(() => {
+                            registration.update();
+                        }, 60000); // Check every minute
+                        
+                        // Listen for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New version available
+                                    console.log('SW: New version available');
+                                    
+                                    // PWA system will handle showing update banner
+                                    if (window.PWA) {
+                                        window.PWA.checkForUpdates();
+                                    }
+                                }
+                            });
+                        });
+                        
+                        // Handle service worker messages
+                        navigator.serviceWorker.addEventListener('message', event => {
+                            if (event.data && event.data.type === 'SW_ACTIVATED') {
+                                console.log('SW: Service worker activated - version', event.data.version);
+                                hideLoadingScreen();
+                            }
+                        });
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+        
+        // Loading screen management
+        let loadingSteps = ['Preparing world', 'Loading assets', 'Initializing systems', 'Ready!'];
+        let currentStep = 0;
+        
+        function updateLoadingText() {
+            const loadingText = document.querySelector('.loading-text');
+            if (loadingText && currentStep < loadingSteps.length) {
+                loadingText.textContent = loadingSteps[currentStep];
+                currentStep++;
+            }
+        }
+        
+        // Update loading text every 500ms
+        const loadingInterval = setInterval(() => {
+            updateLoadingText();
+        }, 500);
+        
+        // Hide loading screen when game is ready
+        function hideLoadingScreen() {
+            clearInterval(loadingInterval);
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.classList.add('loading-hidden');
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }
+        }
+        
+        // Prevent unwanted mobile behaviors
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+        
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+        
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // Handle orientation changes
+        window.addEventListener('orientationchange', () => {
+            // Give the browser time to handle orientation change
+            setTimeout(() => {
+                if (window.Mobile && window.Mobile.updateCanvasSize) {
+                    window.Mobile.updateCanvasSize();
+                }
+                
+                // Update PWA for orientation change
+                if (window.PWA && window.PWA.handleOrientationChange) {
+                    window.PWA.handleOrientationChange();
+                }
+                
+                // Notify service worker of orientation change
+                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                    const orientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+                    navigator.serviceWorker.controller.postMessage({
+                        type: 'ORIENTATION_CHANGE',
+                        orientation: orientation
+                    });
+                }
+            }, 100);
+        });
+        
+        // Make hideLoadingScreen available globally
+        window.hideLoadingScreen = hideLoadingScreen;
+    </script>
+
+    <!-- Scripts loaded in dependency order -->
+    <!-- Level 1: Core utilities (no dependencies) -->
+    <script src="src/utils/math.js"></script>
+
+    <!-- Level 2: Core systems (depend on utils) -->
+    <script src="src/core/mobile.js"></script>
+    <script src="src/core/input.js"></script>
+    <script src="src/core/touch-controls.js"></script>
+    <script src="src/core/scene.js"></script>
+    <script src="src/core/performance.js"></script>
+    <script src="src/core/loop.js"></script>
+    <script src="src/core/pwa.js"></script>
+
+    <!-- Level 3: Engine systems (depend on core) -->
+    <script src="src/engine/renderer.js"></script>
+    <script src="src/engine/tilemap.js"></script>
+    <script src="src/engine/effects.js"></script>
+
+    <!-- Level 4: Game systems (depend on engine) -->
+    <script src="src/game/ui.js"></script>
+    <script src="src/game/inventory.js"></script>
+    <script src="src/game/enemies.js"></script>
+    <script src="src/game/player.js"></script>
+    <script src="src/game/overworld.js"></script>
+    <script src="src/game/battle.js"></script>
+    <script src="src/game/town.js"></script>
+
+    <!-- Level 5: Main game initialization (depends on all) -->
+    <script src="src/game/main.js"></script>
+</body>
+</html>

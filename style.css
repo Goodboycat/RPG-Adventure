@@ -1,0 +1,31 @@
+/* RPG Game Styles */
+body {
+    font-family: 'Courier New', monospace;
+    background: #000;
+}
+
+#gameCanvas {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    border: 2px solid #333;
+}
+
+.topbar span {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.hint {
+    font-size: 11px;
+    color: #666;
+    background: rgba(16, 18, 24, 0.6);
+}
+
+/* Ensure proper centering and scaling */
+@media (max-width: 1920px) and (max-height: 1080px) {
+    #gameCanvas {
+        width: 100vw;
+        height: calc(100vh - 100px); /* Account for topbar and hint */
+    }
+}
