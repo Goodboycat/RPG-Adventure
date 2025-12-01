@@ -14,7 +14,7 @@ window.animationId = null;
 
 // Performance tracking
 window.frameCount = 0;
-window.performanceReportInterval = 5000; // Report every 5 seconds
+window.performanceReportInterval = 30000; // Report every 30 seconds in production
 window.lastPerformanceReport = 0;
 
 // Main game loop with delta time and frame rate capping
@@ -161,50 +161,20 @@ window.stopGame = function() {
 
 // Initialize game systems
 window.initGame = function() {
-  console.log('Initializing game systems...');
-  
-  try {
-    // Initialize mobile system first (for device detection)
-    if (window.Mobile) {
-      window.Mobile.init();
-      console.log('Mobile system initialized');
-    } else {
-      console.warn('Mobile system not available');
-    }
-    
-    // Initialize input system
-    if (window.Input) {
-      window.Input.init();
-      console.log('Input system initialized');
-    } else {
-      console.error('Input system not available');
-    }
-
-    // Initialize touch controls (only on mobile devices)
-    if (window.TouchControls) {
-      window.TouchControls.init();
-      console.log('Touch controls initialized');
-    } else {
-      console.warn('Touch controls not available');
-    }
-
-    // Start with default scene
-    if (window.SceneManager && window.SceneManager.switchScene) {
-      const success = window.SceneManager.switchScene('overworld');
-      if (success) {
-        console.log('Overworld scene loaded');
-      } else {
-        console.error('Failed to load overworld scene');
-      }
-    } else {
-      console.error('SceneManager not available');
-    }
-
-    // Start the game loop (will initialize performance systems)
-    window.startGame();
-    console.log('Game initialization complete');
-  } catch (error) {
-    console.error('Game systems initialization failed:', error);
-    throw error;
+  // Initialize mobile system first (for device detection)
+  if (window.Mobile) {
+    window.Mobile.init();
   }
+  
+  // Initialize input system
+  window.Input.init();
+
+  // Initialize touch controls (only on mobile devices)
+  window.TouchControls.init();
+
+  // Start with default scene
+  window.SceneManager.switchScene('overworld');
+
+  // Start the game loop (will initialize performance systems)
+  window.startGame();
 };

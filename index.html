@@ -18,10 +18,10 @@
     
     <!-- PWA manifest and icons -->
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-    <link rel="icon" type="image/png" href="icons/icon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="icons/icon-192x192.png" sizes="192x192">
-    <link rel="icon" type="image/png" href="icons/icon-512x512.png" sizes="512x512">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.svg">
+    <link rel="icon" type="image/svg+xml" href="icons/icon-32x32.svg" sizes="32x32">
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192x192.svg" sizes="192x192">
+    <link rel="icon" type="image/svg+xml" href="icons/icon-512x512.svg" sizes="512x512">
     
     <title>RPG Adventure</title>
     
@@ -414,15 +414,6 @@
         
         // Make hideLoadingScreen available globally
         window.hideLoadingScreen = hideLoadingScreen;
-        
-        // Fallback: hide loading screen after 10 seconds even if initialization fails
-        setTimeout(() => {
-            const loadingScreen = document.getElementById('loadingScreen');
-            if (loadingScreen && loadingScreen.style.display !== 'none') {
-                console.warn('Loading screen timeout - forcing hide');
-                hideLoadingScreen();
-            }
-        }, 10000);
     </script>
 
     <!-- Scripts loaded in dependency order -->
@@ -454,5 +445,9 @@
 
     <!-- Level 5: Main game initialization (depends on all) -->
     <script src="src/game/main.js"></script>
+    
+    <!-- Production Build Scripts -->
+    <script src="deploy.js"></script>
+    <script src="build-verify.js"></script>
 </body>
 </html>

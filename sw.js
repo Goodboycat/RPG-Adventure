@@ -32,13 +32,13 @@ const STATIC_ASSETS = [
 
 // App icons and assets
 const ICON_ASSETS = [
-  '/icons/icon-32x32.png',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
-  '/icons/new-game.png',
-  '/icons/continue.png',
-  '/icons/explore.png',
-  '/icons/dismiss.png'
+  '/icons/icon-32x32.svg',
+  '/icons/icon-192x192.svg',
+  '/icons/icon-512x512.svg',
+  '/icons/new-game.svg',
+  '/icons/continue.svg',
+  '/icons/explore.svg',
+  '/icons/dismiss.svg'
 ];
 
 // Install event - cache static assets

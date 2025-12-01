@@ -145,3 +145,42 @@ Scene-based architecture with 60fps game loop and modular systems:
 2. The game starts in the overworld scene
 3. Navigate using arrow keys and interact with Enter key
 4. Explore the town, fight battles, and progress your character
+
+## Build & Deployment
+
+### Development
+- Run `index.html` directly in browser for development
+- All console logging enabled for debugging
+- Loading screen timeout set to 10 seconds
+
+### Production Compilation
+The game includes automated build verification and deployment:
+
+**Build Verification (`build-verify.js`):**
+- Checks all required game objects and systems
+- Verifies service worker registration
+- Validates PWA manifest and icons
+- Tests scene manager and game loop
+- Confirms mobile responsiveness
+- Reports any issues before deployment
+
+**Deployment Manager (`deploy.js`):**
+- Optimizes performance settings for production
+- Configures service worker for offline play
+- Reduces console logging in production mode
+- Sets up PWA features and install prompts
+- Adds production meta tags and version info
+- Verifies all critical assets are loaded
+
+**To Build for Production:**
+1. Open `index.html` in browser
+2. Wait for build verification to complete (check console). Verify "Build verification PASSED!" message
+4. Deploy the entire folder to your web server
+
+**Production Features:**
+- ✅ Service Worker with offline caching
+- ✅ PWA install capability
+- ✅ Mobile-optimized performance
+- ✅ Automatic error handling and recovery
+- ✅ Comprehensive build verification
+- ✅ Progressive loading with fallbacks
