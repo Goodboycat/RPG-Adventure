@@ -44,8 +44,29 @@ window.TileAtlas = class TileAtlas {
   // Draw tile at screen position
   drawTile(ctx, tileId, screenX, screenY) {
     const tile = this.getTile(tileId);
-    if (!tile || !this.image) return;
+    if (!tile) return;
 
+    // If no image loaded, draw colored rectangles as fallback
+    if (!this.image) {
+      const colors = {
+        1: '#4CAF50', // Grass
+        2: '#8B4513', // Wall
+        3: '#D2691E', // Path
+        4: '#2196F3', // Water
+        5: '#228B22', // Forest
+        6: '#696969'  // Mountain
+      };
+      
+      const color = colors[tileId] || '#ffffff';
+      window.Renderer.drawRect(screenX, screenY, this.tileSize, this.tileSize, color);
+      
+      // Add subtle border for tiles
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+      ctx.strokeRect(screenX, screenY, this.tileSize, this.tileSize);
+      return;
+    }
+
+    // Use image if available
     window.Renderer.drawSpriteFrame(
       this.image,
       tile.sourceX,

@@ -27,7 +27,11 @@ window.Game = {
     const hasSave = window.SaveManager.init();
     
     // Initialize renderer
-    window.Renderer.init();
+    const rendererSuccess = window.Renderer.init();
+    if (!rendererSuccess) {
+      console.error('Failed to initialize renderer');
+      throw new Error('Renderer initialization failed');
+    }
     this.canvas = window.Renderer.canvas;
     this.ctx = window.Renderer.ctx;
 

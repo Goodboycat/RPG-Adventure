@@ -14,10 +14,25 @@ window.Renderer = {
   // Initialize renderer
   init: function() {
     this.canvas = document.getElementById('gameCanvas');
-    this.ctx = this.canvas.getContext('2d');
+    if (!this.canvas) {
+      console.error('Renderer: Canvas not found');
+      return false;
+    }
     
-    // Enable image smoothing for pixel art
+    this.ctx = this.canvas.getContext('2d');
+    if (!this.ctx) {
+      console.error('Renderer: Could not get 2D context');
+      return false;
+    }
+    
+    // Disable image smoothing for pixel art
     this.ctx.imageSmoothingEnabled = false;
+    this.ctx.webkitImageSmoothingEnabled = false;
+    this.ctx.mozImageSmoothingEnabled = false;
+    this.ctx.msImageSmoothingEnabled = false;
+    
+    console.log('Renderer initialized successfully');
+    return true;
   },
 
   // Clear the entire canvas

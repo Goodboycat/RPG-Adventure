@@ -59,7 +59,7 @@ window.PWA = class PWA {
       banner.innerHTML = `
         <div class="install-banner-content">
           <div class="install-banner-icon">
-            <img src="icons/icon-192x192.png" alt="RPG Adventure" />
+            <img src="icons/icon-192x192.svg" alt="RPG Adventure" />
           </div>
           <div class="install-banner-text">
             <div class="install-banner-title">Install RPG Adventure</div>
@@ -77,20 +77,31 @@ window.PWA = class PWA {
       style.textContent = `
         #installBanner {
           position: fixed;
-          bottom: -100px;
+          bottom: -120px;
           left: 0;
           right: 0;
           background: linear-gradient(135deg, rgba(16, 18, 24, 0.95) 0%, rgba(32, 36, 48, 0.95) 100%);
           backdrop-filter: blur(20px);
           border-top: 1px solid rgba(255, 255, 255, 0.1);
           padding: 16px;
-          z-index: 10001;
+          padding-bottom: 20px;
+          z-index: 99999;
           transition: bottom 0.3s ease-out;
           box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+          /* Ensure it's above mobile navigation */
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
         }
         
         #installBanner.show {
           bottom: 0;
+        }
+        
+        /* Add safe area padding for mobile devices */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+          #installBanner {
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+          }
         }
         
         .install-banner-content {
@@ -206,6 +217,8 @@ window.PWA = class PWA {
         @media (orientation: landscape) and (max-height: 500px) {
           #installBanner {
             padding: 12px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+            bottom: -100px;
           }
           
           .install-banner-content {
@@ -230,6 +243,7 @@ window.PWA = class PWA {
           .install-button-secondary {
             padding: 6px 12px;
             font-size: 12px;
+            min-height: 32px;
           }
         }
       `;
