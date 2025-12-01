@@ -161,20 +161,50 @@ window.stopGame = function() {
 
 // Initialize game systems
 window.initGame = function() {
-  // Initialize mobile system first (for device detection)
-  if (window.Mobile) {
-    window.Mobile.init();
-  }
+  console.log('Initializing game systems...');
   
-  // Initialize input system
-  window.Input.init();
+  try {
+    // Initialize mobile system first (for device detection)
+    if (window.Mobile) {
+      window.Mobile.init();
+      console.log('Mobile system initialized');
+    } else {
+      console.warn('Mobile system not available');
+    }
+    
+    // Initialize input system
+    if (window.Input) {
+      window.Input.init();
+      console.log('Input system initialized');
+    } else {
+      console.error('Input system not available');
+    }
 
-  // Initialize touch controls (only on mobile devices)
-  window.TouchControls.init();
+    // Initialize touch controls (only on mobile devices)
+    if (window.TouchControls) {
+      window.TouchControls.init();
+      console.log('Touch controls initialized');
+    } else {
+      console.warn('Touch controls not available');
+    }
 
-  // Start with default scene
-  window.SceneManager.switchScene('overworld');
+    // Start with default scene
+    if (window.SceneManager && window.SceneManager.switchScene) {
+      const success = window.SceneManager.switchScene('overworld');
+      if (success) {
+        console.log('Overworld scene loaded');
+      } else {
+        console.error('Failed to load overworld scene');
+      }
+    } else {
+      console.error('SceneManager not available');
+    }
 
-  // Start the game loop (will initialize performance systems)
-  window.startGame();
+    // Start the game loop (will initialize performance systems)
+    window.startGame();
+    console.log('Game initialization complete');
+  } catch (error) {
+    console.error('Game systems initialization failed:', error);
+    throw error;
+  }
 };

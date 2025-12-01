@@ -266,20 +266,39 @@ window.Game = {
 
 // Auto-initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize game
-  window.Game.init();
-  
-  // Start the game loop
-  window.initGame();
-  
-  // Handle PWA app shortcuts and URL parameters
-  window.Game.handleURLParameters();
-  
-  // Hide loading screen after initialization
-  if (window.hideLoadingScreen) {
-    setTimeout(() => {
-      window.hideLoadingScreen();
-    }, 1000);
+  try {
+    console.log('Starting game initialization...');
+    
+    // Initialize game
+    window.Game.init();
+    console.log('Game initialized');
+    
+    // Start the game loop
+    if (typeof window.initGame === 'function') {
+      window.initGame();
+      console.log('Game loop started');
+    } else {
+      console.error('window.initGame not available');
+    }
+    
+    // Handle PWA app shortcuts and URL parameters
+    window.Game.handleURLParameters();
+    
+    // Hide loading screen after successful initialization
+    if (window.hideLoadingScreen) {
+      setTimeout(() => {
+        window.hideLoadingScreen();
+        console.log('Loading screen hidden');
+      }, 500);
+    }
+  } catch (error) {
+    console.error('Game initialization failed:', error);
+    // Still hide loading screen to show error state
+    if (window.hideLoadingScreen) {
+      setTimeout(() => {
+        window.hideLoadingScreen();
+      }, 1000);
+    }
   }
   
   // Add keyboard shortcut for saving

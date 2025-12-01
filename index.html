@@ -414,6 +414,15 @@
         
         // Make hideLoadingScreen available globally
         window.hideLoadingScreen = hideLoadingScreen;
+        
+        // Fallback: hide loading screen after 10 seconds even if initialization fails
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen && loadingScreen.style.display !== 'none') {
+                console.warn('Loading screen timeout - forcing hide');
+                hideLoadingScreen();
+            }
+        }, 10000);
     </script>
 
     <!-- Scripts loaded in dependency order -->
